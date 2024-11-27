@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Final_Project</string>
+    <string-array name="activity_levels">
+        <item>久坐</item>
+        <item>每周運動1-3天</item>
+        <item>每周運動3-5天</item>
+        <item>每周運動6-7天</item>
+        <item>無時無刻都在運動</item>
+    </string-array>
 </resources>

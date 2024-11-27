@@ -1,19 +1,23 @@
 package com.example.final_project
 
-class UserData(
-    private var gender: String,
-    private var age: Int,
-    private var height: Double, // 身高（单位：厘米）
-    private var weight: Double, // 体重（单位：公斤）
-    private var activityLevel: Double // 活动系数
-) {
+class UserData {
+    //成員變數
+    private lateinit var gender: String
+    private var age: Int = 0
+    private var height: Int = 0 // 身高（单位：厘米）
+    private var weight: Int = 0 // 体重（单位：公斤）
+    private var activityLevel: Double = 1.2 // 活动系数
+
+
+
+
 
     // BMR 计算 (基础代谢率)
     fun calculateBMR(): Double {
         return if (gender == "男") {
-            88.362 + (13.397 * weight) + (4.799 * height) - (5.677 * age)
+            66 + (13.7 * weight) + (5 * height) - (6.8 * age)
         } else {
-            447.593 + (9.247 * weight) + (3.098 * height) - (4.330 * age)
+            655 + (9.6 * weight) + (1.8 * height) - (4.7 * age)
         }
     }
 
@@ -24,7 +28,7 @@ class UserData(
     }
 
     // 更新用户资料
-    fun updateUserData(newGender: String, newAge: Int, newHeight: Double, newWeight: Double) {
+    fun updateUserData(newGender: String, newAge: Int, newHeight: Int, newWeight: Int) {
         gender = newGender
         age = newAge
         height = newHeight
