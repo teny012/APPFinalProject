@@ -36,6 +36,8 @@ class FragmentThree : Fragment() {
         // 從 SharedPreferences 中載入並顯示 userData
         loadData()
 
+
+
         // 返回 View 對象
         return view
     }
@@ -56,6 +58,8 @@ class FragmentThree : Fragment() {
             tvTDEE.text = "TDEE: ${String.format("%.2f", userData.getUserData()["TDEE"])}"
         }
     }
+
+
 
 
 }

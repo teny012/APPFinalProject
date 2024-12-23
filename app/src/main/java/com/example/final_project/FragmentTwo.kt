@@ -75,8 +75,13 @@ class FragmentTwo : Fragment() {
 
             // 保存最新的 userData
             saveUserData(userData)
+
+            //按下按鈕更新FragmentThree的畫面
+            (activity as? MainActivity)?.adapter?.updateFragmentThree()
+
             // 加載資料並更新 UI
             loadData()
+
 
 
         }
