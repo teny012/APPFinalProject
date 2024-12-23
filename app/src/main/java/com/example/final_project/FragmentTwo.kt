@@ -9,9 +9,12 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.Spinner
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.gson.Gson
 
 class FragmentTwo : Fragment() {
 
@@ -24,8 +27,8 @@ class FragmentTwo : Fragment() {
     private lateinit var btnStart: Button
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var spinnerActivityLevel: Spinner
-    private var userData = UserData() //使用者資料物件
-
+    private lateinit var infoIcon: ImageView
+    private var userData = UserData() // 使用者資料物件
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -37,17 +40,18 @@ class FragmentTwo : Fragment() {
         // 初始化 SharedPreferences
         sharedPreferences = requireActivity().getSharedPreferences("UserData", Context.MODE_PRIVATE)
 
-        //使用這個view來查找並綁定元件
-        tvGender = view.findViewById<TextView>(R.id.tvGender)
-        tvAge = view.findViewById<TextView>(R.id.tvAge)
-        tvHeight = view.findViewById<TextView>(R.id.tvHeight)
-        tvWeight = view.findViewById<TextView>(R.id.tvWeight)
-        btnStart = view.findViewById<Button>(R.id.btnStart)
-        tvBMR = view.findViewById<TextView>(R.id.tvBMR)
-        tvTDEE = view.findViewById<TextView>(R.id.tvTDEE)
-        spinnerActivityLevel = view.findViewById<Spinner>(R.id.spActivityLevel)
+        // 綁定元件
+        tvGender = view.findViewById(R.id.tvGender)
+        tvAge = view.findViewById(R.id.tvAge)
+        tvHeight = view.findViewById(R.id.tvHeight)
+        tvWeight = view.findViewById(R.id.tvWeight)
+        btnStart = view.findViewById(R.id.btnStart)
+        tvBMR = view.findViewById(R.id.tvBMR)
+        tvTDEE = view.findViewById(R.id.tvTDEE)
+        spinnerActivityLevel = view.findViewById(R.id.spActivityLevel)
+        infoIcon = view.findViewById(R.id.info_icon)
 
-        // 加载并显示初始数据
+        // 加載並顯示資料
         loadData()
 
         // 設置 Spinner 的下拉選單選項
@@ -60,14 +64,20 @@ class FragmentTwo : Fragment() {
             spinnerActivityLevel.adapter = adapter
         }
 
-        // 當點擊計算 計算 按鈕時
+        // 設置計算按鈕的點擊事件
         btnStart.setOnClickListener {
-            // 计算 BMR
-            var userBMR = userData.calculateBMR()
-            tvBMR.text = String.format("%.2f", userBMR)
+            // 計算 BMR 和 TDEE 並更新
+            val userBMR = userData.calculateBMR()
+            userData.updateBMR(userBMR)
 
-            var userTDEE = userData.calculateTDEE()
-            tvTDEE.text = String.format("%.2f", userTDEE)
+            val userTDEE = userData.calculateTDEE()
+            userData.updateTDEE(userTDEE)
+
+            // 保存最新的 userData
+            saveUserData(userData)
+            // 加載資料並更新 UI
+            loadData()
+
 
         }
 
@@ -87,9 +97,8 @@ class FragmentTwo : Fragment() {
                     4 -> 1.9   // 非常活躍
                     else -> 1.2 // 默認為久坐
                 }
-
-                // 更新 UserData 的活動系數
                 userData.updateActivityLevel(activityLevel)
+
             }
 
             override fun onNothingSelected(parent: AdapterView<*>) {
@@ -97,43 +106,56 @@ class FragmentTwo : Fragment() {
             }
         }
 
+        // info_icon 的點擊事件，顯示 BottomSheetDialog
+        infoIcon.setOnClickListener {
+            val bottomSheetDialog = BottomSheetDialog(requireContext())
+            val dialogView = layoutInflater.inflate(R.layout.bottom_sheet_dialog, null)
+            bottomSheetDialog.setContentView(dialogView)
+            bottomSheetDialog.show()
+        }
 
-
-
-        // 返回 View 對象
         return view
     }
 
-    // 加载数据并更新 UI
-    fun updateData() {
-        loadData()
-    }
-
+    // 加載資料並更新 UI
     fun loadData() {
-        // 从 SharedPreferences 中获取数据
-        val gender = sharedPreferences.getString("gender", "")?.trim() ?: "尚未輸入"
-        val age = sharedPreferences.getString("age", "0")?.toIntOrNull() ?: 0
-        val height = sharedPreferences.getString("height", "0")?.toIntOrNull() ?: 0
-        val weight = sharedPreferences.getString("weight", "0")?.toIntOrNull() ?: 0
+        val loadedUserData = loadUserData()
+        if (loadedUserData != null) {
+            userData = loadedUserData
+        }
 
-        // 更新 TextView
-        tvGender.text = gender
-        tvAge.text = "$age"
-        tvHeight.text = "$height"
-        tvWeight.text = "$weight"
+        // 更新 TextView 顯示
+        tvGender.text = userData.getUserData()["gender"].toString()
+        tvAge.text = userData.getUserData()["age"].toString()
+        tvHeight.text = userData.getUserData()["height"].toString()
+        tvWeight.text = userData.getUserData()["weight"].toString()
 
-        // 更新 userData 的資料
-        userData.updateUserData(gender, age, height, weight)
-
-        // 打印輸出的日誌來檢查數值是否正確
-        println("Gender: $gender, Age: $age, Height: $height, Weight: $weight")
-        println("Calculated BMR: ${userData.calculateBMR()}")
+        // 如果需要，也可以重新計算 BMR/TDEE
+        val userBMR = userData.calculateBMR()
+        tvBMR.text = String.format("%.2f", userBMR)
+        val userTDEE = userData.calculateTDEE()
+        tvTDEE.text = String.format("%.2f", userTDEE)
     }
 
+    // 儲存 userData 到 SharedPreferences
+    private fun saveUserData(userData: UserData) {
+        val editor = sharedPreferences.edit()
+        val gson = Gson()
+        val userDataJson = gson.toJson(userData)
+        editor.putString("userData", userDataJson)
+        editor.apply()
+    }
 
-
-
-
+    // 從 SharedPreferences 載入 userData
+    private fun loadUserData(): UserData? {
+        val userDataJson = sharedPreferences.getString("userData", null)
+        return if (userDataJson != null) {
+            val gson = Gson()
+            gson.fromJson(userDataJson, UserData::class.java)
+        } else {
+            null
+        }
+    }
 
 
 }

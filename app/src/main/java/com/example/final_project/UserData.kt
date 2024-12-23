@@ -2,11 +2,13 @@ package com.example.final_project
 
 class UserData {
     //成員變數
-    private lateinit var gender: String
+    private var gender: String = "男"
     private var age: Int = 0
     private var height: Int = 0 // 身高（单位：厘米）
     private var weight: Int = 0 // 体重（单位：公斤）
     private var activityLevel: Double = 1.2 // 活动系数
+    private var BMR: Double = 0.0;
+    private var TDEE: Double = 0.0;
 
 
 
@@ -40,6 +42,14 @@ class UserData {
         activityLevel = newActivityLevel
     }
 
+    fun updateBMR(newBMR: Double){
+        BMR = newBMR
+    }
+
+    fun updateTDEE(newTDEE: Double){
+        TDEE = newTDEE
+    }
+
     // 获取用户资料
     fun getUserData(): Map<String, Any> {
         return mapOf(
@@ -47,7 +57,9 @@ class UserData {
             "age" to age,
             "height" to height,
             "weight" to weight,
-            "activityLevel" to activityLevel
+            "activityLevel" to activityLevel,
+            "BMR" to BMR,
+            "TDEE" to TDEE
         )
     }
 }

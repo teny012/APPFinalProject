@@ -17,7 +17,7 @@ class ViewPagerAdapter(fragmentManager: FragmentManager, lifecycle: Lifecycle)
 
     override fun getItemCount(): Int {
         // 返回 ViewPager2 中頁面的數量
-        return 4 // 有 3 個頁面
+        return 4
     }
 
     override fun createFragment(position: Int): Fragment {
@@ -37,6 +37,6 @@ class ViewPagerAdapter(fragmentManager: FragmentManager, lifecycle: Lifecycle)
 
     // 调用 FragmentTwo 的 loadData 方法
     fun updateFragmentTwo() {
-        fragmentTwo?.updateData()
+        fragmentTwo?.loadData()
     }
 }

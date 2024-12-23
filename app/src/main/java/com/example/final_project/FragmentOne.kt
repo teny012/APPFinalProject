@@ -19,6 +19,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
+import com.google.gson.Gson
 import java.util.Locale
 import java.util.Date
 
@@ -112,7 +113,7 @@ class FragmentOne : Fragment() {
     }
 
     //保存目標
-    private fun saveGoal() {
+   /* private fun saveGoal() {
         val age = edAge.text.toString()
         val height = edHeight.text.toString()
         val weight = edWeight.text.toString()
@@ -137,7 +138,41 @@ class FragmentOne : Fragment() {
         } else {
             Toast.makeText(requireContext(), "資料填寫不完整", Toast.LENGTH_SHORT).show()
         }
+    }*/
+
+    private fun saveGoal() {//儲存個人資料
+        val age = edAge.text.toString()
+        val height = edHeight.text.toString()
+        val weight = edWeight.text.toString()
+
+        if (age.isNotEmpty() && height.isNotEmpty() && weight.isNotEmpty()) {
+            val userData = UserData()
+
+            // 更新 userData 物件
+            userData.updateUserData(selectedGender, age.toInt(), height.toInt(), weight.toInt())
+
+            // 使用 Gson 將 userData 存到 SharedPreferences
+            val gson = Gson()
+            val userDataJson = gson.toJson(userData)
+            val editor = sharedPreferencesUserData.edit()
+            editor.putString("userData", userDataJson)
+            editor.apply()
+
+            // 清空輸入框
+            edAge.text.clear()
+            edHeight.text.clear()
+            edWeight.text.clear()
+            tvDate.text = "請選擇日期"
+
+            Toast.makeText(requireContext(), "個人資料設置完畢，去設置目標吧!", Toast.LENGTH_SHORT).show()
+
+            // 通知 FragmentTwo 資料已更新
+            (activity as? MainActivity)?.adapter?.updateFragmentTwo()
+        } else {
+            Toast.makeText(requireContext(), "資料填寫不完整", Toast.LENGTH_SHORT).show()
+        }
     }
+
 
     // 顯示確認刪除對話框
     private fun showConfirmDialog(position: Int) {
