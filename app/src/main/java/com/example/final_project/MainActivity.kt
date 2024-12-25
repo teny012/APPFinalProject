@@ -35,8 +35,8 @@ class MainActivity : AppCompatActivity() {
             when(position){
                 0 -> tab.text = "首頁"
                 1 -> tab.text = "個人資料"
-                2 -> tab.text = "運動"
-                3 -> tab.text = "飲食"
+                2 -> tab.text = "飲食"
+                3 -> tab.text = "運動"
 
             }
         }.attach()
