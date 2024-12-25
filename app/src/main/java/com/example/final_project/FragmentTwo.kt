@@ -12,6 +12,7 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.Spinner
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.gson.Gson
@@ -28,7 +29,7 @@ class FragmentTwo : Fragment() {
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var spinnerActivityLevel: Spinner
     private lateinit var infoIcon: ImageView
-    private var userData = UserData() // 使用者資料物件
+    private var userData = UserData()// 使用者資料物件
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -66,22 +67,27 @@ class FragmentTwo : Fragment() {
 
         // 設置計算按鈕的點擊事件
         btnStart.setOnClickListener {
-            // 計算 BMR 和 TDEE 並更新
-            val userBMR = userData.calculateBMR()
-            userData.updateBMR(userBMR)
+                if(userData.getUserData()["age"] == 0 || userData.getUserData()["height"] == 0 || userData.getUserData()["weight"] == 0){
+                    Toast.makeText(requireContext(), "個人資料尚未設定或有誤", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+                else {
+                    // 計算 BMR 和 TDEE 並更新
+                    val userBMR = userData.calculateBMR()
+                    userData.updateBMR(userBMR)
 
-            val userTDEE = userData.calculateTDEE()
-            userData.updateTDEE(userTDEE)
+                    val userTDEE = userData.calculateTDEE()
+                    userData.updateTDEE(userTDEE)
 
-            // 保存最新的 userData
-            saveUserData(userData)
+                    // 保存最新的 userData
+                    saveUserData(userData)
 
-            //按下按鈕更新FragmentThree的畫面
-            (activity as? MainActivity)?.adapter?.updateFragmentThree()
+                    //按下按鈕更新FragmentThree的畫面
+                    (activity as? MainActivity)?.adapter?.updateFragmentThree()
 
-            // 加載資料並更新 UI
-            loadData()
-
+                    // 加載資料並更新 UI
+                    loadData()
+                }
 
 
         }
@@ -130,6 +136,7 @@ class FragmentTwo : Fragment() {
         }
 
         // 更新 TextView 顯示
+        // userData一開始就要先建立物件，否則會出錯
         tvGender.text = userData.getUserData()["gender"].toString()
         tvAge.text = userData.getUserData()["age"].toString()
         tvHeight.text = userData.getUserData()["height"].toString()

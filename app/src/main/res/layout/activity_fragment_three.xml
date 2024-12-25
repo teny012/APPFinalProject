@@ -8,22 +8,33 @@
     tools:context=".FragmentThree">
 
     <TextView
+        android:id="@+id/tvCalories"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="今日消耗熱量： 0"
+        android:textSize="25sp"
+        android:layout_marginEnd="30dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <TextView
         android:id="@+id/tvWeight"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TextView"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        android:text="體重： 尚無資料"
+        android:layout_marginEnd="40dp"
+        android:textSize="15sp"
+        app:layout_constraintEnd_toStartOf="@id/tvCalories"
+        app:layout_constraintTop_toTopOf="@id/tvCalories"/>
 
     <TextView
         android:id="@+id/tvTDEE"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TextView"
-        app:layout_constraintTop_toBottomOf="@id/tvWeight"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        android:text="TDEE： 尚無資料"
+        android:textSize="15sp"
+        app:layout_constraintStart_toStartOf="@id/tvWeight"
+        app:layout_constraintTop_toBottomOf="@id/tvWeight"/>
 
     <EditText
         android:id="@+id/edActivity"
@@ -56,11 +67,36 @@
         app:layout_constraintEnd_toEndOf="@id/edActivity"
         app:layout_constraintTop_toBottomOf="@id/edDuration"/>
 
-    <ListView
-        android:id="@+id/lvCalories"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginTop="20dp"
-        app:layout_constraintTop_toBottomOf="@id/btnSubmit"/>
+
+        android:clipToPadding="false"
+        android:paddingBottom="16dp"
+        android:scrollbars="vertical"
+        app:layout_constraintTop_toBottomOf="@id/btnSubmit"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <Button
+        android:id="@+id/btnCustom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="自訂"
+        android:layout_marginEnd="20dp"
+        app:layout_constraintEnd_toStartOf="@id/btnSubmit"
+        app:layout_constraintTop_toTopOf="@id/btnSubmit"
+        app:layout_constraintBottom_toBottomOf="@id/btnSubmit"/>
+
+    <Button
+        android:id="@+id/btnShowRecord"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="查看紀錄"
+        android:layout_marginStart="20dp"
+        app:layout_constraintStart_toEndOf="@id/btnSubmit"
+        app:layout_constraintTop_toTopOf="@id/btnSubmit"
+        app:layout_constraintBottom_toBottomOf="@id/btnSubmit"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
