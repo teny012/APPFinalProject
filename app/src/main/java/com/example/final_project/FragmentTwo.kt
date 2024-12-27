@@ -84,6 +84,7 @@ class FragmentTwo : Fragment() {
 
                     //按下按鈕更新FragmentThree的畫面
                     (activity as? MainActivity)?.adapter?.updateFragmentThree()
+                    (activity as? MainActivity)?.adapter?.updateFragmentFour()
 
                     // 加載資料並更新 UI
                     loadData()

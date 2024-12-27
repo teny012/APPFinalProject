@@ -15,6 +15,7 @@ class ViewPagerAdapter(fragmentManager: FragmentManager, lifecycle: Lifecycle)
 
     private var fragmentTwo: FragmentTwo? = null
     private var fragmentThree: FragmentThree? = null
+    private var fragmentFour: FragmentFour? = null
 
     override fun getItemCount(): Int {
         // 返回 ViewPager2 中頁面的數量
@@ -37,7 +38,12 @@ class ViewPagerAdapter(fragmentManager: FragmentManager, lifecycle: Lifecycle)
                 }
                 fragmentThree!!
             } // 第三個頁面
-            else -> FragmentFour() // 第四個頁面
+            else -> {
+                if (fragmentFour == null) {
+                    fragmentFour = FragmentFour()
+                }
+                fragmentFour!!
+            }// 第四個頁面
         }
     }
 
@@ -49,5 +55,9 @@ class ViewPagerAdapter(fragmentManager: FragmentManager, lifecycle: Lifecycle)
 
     fun updateFragmentThree() {
         fragmentThree?.loadData()
+    }
+
+    fun updateFragmentFour() {
+        fragmentFour?.loadData()
     }
 }
