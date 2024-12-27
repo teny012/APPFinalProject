@@ -83,11 +83,12 @@
         android:id="@+id/btnCustom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="自訂"
         android:layout_marginEnd="20dp"
+        android:text="自訂"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@id/btnSubmit"
         app:layout_constraintEnd_toStartOf="@id/btnSubmit"
-        app:layout_constraintTop_toTopOf="@id/btnSubmit"
-        app:layout_constraintBottom_toBottomOf="@id/btnSubmit"/>
+        app:layout_constraintTop_toTopOf="@id/btnSubmit" />
 
     <Button
         android:id="@+id/btnShowRecord"
