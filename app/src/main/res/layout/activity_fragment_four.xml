@@ -12,8 +12,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="今日攝取熱量： 0"
-        android:textSize="25sp"
+        android:textSize="20sp"
         android:layout_marginEnd="30dp"
+        app:layout_constraintStart_toEndOf="@id/tvWeight"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 
@@ -22,8 +23,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="體重： 尚無資料"
-        android:layout_marginEnd="40dp"
+        android:layout_marginEnd="20dp"
         android:textSize="15sp"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/tvCalories"
         app:layout_constraintTop_toTopOf="@id/tvCalories"/>
 

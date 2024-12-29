@@ -85,8 +85,6 @@ class FragmentFour : Fragment() {
         btnAdd.setOnClickListener {
             if (addToRecord()) {
                 Toast.makeText(requireContext(), "已加入紀錄", Toast.LENGTH_SHORT).show()
-                todayCalories += tvFood.text.toString().substringAfter("熱量：").substringBefore(" kcal").toDouble()
-                tvCalories.text = "今日攝取熱量： $todayCalories"
             }
         }
 
@@ -145,6 +143,13 @@ class FragmentFour : Fragment() {
         // 使用活動名稱和當前時間戳組合成唯一的 key，避免重複的項目被覆蓋
         val uniqueKey = "${foodName}_${System.currentTimeMillis()}"
         editor.putString(uniqueKey, tvFood.text.toString())
+
+        // 更新 todayCalories 並顯示和保存
+        todayCalories += tvFood.text.toString().substringAfter("熱量：").substringBefore(" kcal").toDouble()
+        tvCalories.text = "今日攝取熱量： ${String.format("%.2f", todayCalories)}"
+
+        // 更新 todayCalories 並保存
+        editor.putFloat("todayCalories", todayCalories.toFloat())
         editor.apply()
 
         return true
@@ -176,6 +181,7 @@ class FragmentFour : Fragment() {
                 // 如果請求失敗，顯示錯誤訊息
                 activity?.runOnUiThread {
                     tvFood.text = "請求失敗: ${e.message}"
+                    btnAdd.visibility = View.INVISIBLE
                 }
             }
 
@@ -208,11 +214,13 @@ class FragmentFour : Fragment() {
                             btnAdd.visibility = View.VISIBLE
                         } else {
                             tvFood.text = "找不到該食物的營養資訊。"
+                            btnAdd.visibility = View.INVISIBLE
                         }
                     }
                 } else {
                     activity?.runOnUiThread {
                         tvFood.text = "查詢失敗，請稍後再試。"
+                        btnAdd.visibility = View.INVISIBLE
                     }
                 }
             }
@@ -229,11 +237,13 @@ class FragmentFour : Fragment() {
         val sharedPreferences = requireActivity().getSharedPreferences("UserData", Context.MODE_PRIVATE)
         val userDataJson = sharedPreferences.getString("userData", null)
 
-        // 從 SharedPreferences2 中讀取上次保存的 todayCalories，默認值為 0
-//        val sharedPreferences2 = requireActivity().getSharedPreferences("ActivityRecords", Context.MODE_PRIVATE)
-//        todayCalories = sharedPreferences2.getFloat("todayCalories", 0f).toDouble()
-//
-//        tvCalories.text = "今日消耗熱量： $todayCalories"
+        //從 SharedPreferences2 中讀取上次保存的 todayCalories，默認值為 0
+        val sharedPreferences2 = requireActivity().getSharedPreferences("FoodRecords", Context.MODE_PRIVATE)
+        todayCalories = sharedPreferences2.getFloat("todayCalories", 0f).toDouble()
+
+        // 顯示今天的熱量攝取
+        tvCalories.text = "今日攝取熱量： ${String.format("%.2f", todayCalories)}"
+
 
 
         if (userDataJson != null) {
