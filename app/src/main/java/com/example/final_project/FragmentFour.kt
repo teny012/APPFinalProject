@@ -1,12 +1,15 @@
 package com.example.final_project
 
+import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ListView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -90,7 +93,7 @@ class FragmentFour : Fragment() {
 
         //顯示食物紀錄
         btnShowRecord.setOnClickListener {
-         //   showAllRecords() // 點擊按鈕後，顯示已添加的紀錄
+            showRecordDialog() // 點擊按鈕後，顯示已添加的紀錄
         }
 
 
@@ -111,21 +114,98 @@ class FragmentFour : Fragment() {
         return view
     }
 
-//    private fun showAllRecords() {
-//        val sharedPreferences = requireActivity().getSharedPreferences("FoodRecords", Context.MODE_PRIVATE)
-//        val allRecords = sharedPreferences.all
-//
-//        if (allRecords.isEmpty()) {
-//            Toast.makeText(requireContext(), "沒有紀錄", Toast.LENGTH_SHORT).show()
-//        } else {
-//            val stringBuilder = StringBuilder()
-//            for ((key, value) in allRecords) {
-//                stringBuilder.append("$value\n\n")
-//            }
-//
-//            tvFood.text = stringBuilder.toString()
-//        }
-//    }
+    private fun showRecordDialog() {
+        val sharedPreferences = requireActivity().getSharedPreferences("FoodRecords", Context.MODE_PRIVATE)
+        val allRecords = sharedPreferences.all.filterNot { it.key == "todayCalories" } // 過濾掉 "todayCalories" 項目
+
+        if (allRecords.isEmpty()) {
+            Toast.makeText(requireContext(), "沒有紀錄", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        // 創建一個 ArrayList 來儲存所有活動紀錄
+        val recordList = ArrayList<String>()
+        for ((_, value) in allRecords) {
+            recordList.add(value.toString()) // 添加紀錄到 ArrayList
+        }
+
+        // 使用 AlertDialog.Builder 創建一個包含 ListView 的對話框
+        val builder = AlertDialog.Builder(requireContext())
+        val inflater = layoutInflater
+        val dialogView = inflater.inflate(R.layout.dialog_record_list, null)
+        val listView = dialogView.findViewById<ListView>(R.id.listView)
+
+
+        // 設置 ListView 的適配器來顯示紀錄
+        val adapter = RecordAdapter(requireContext(), recordList)
+        listView.adapter = adapter
+
+        // 當點擊 ListView 項目時，刪除該活動紀錄
+        listView.setOnItemClickListener { _, _, position, _ ->
+            val record = recordList[position]
+            val keyToRemove = allRecords.filterValues { it == record }.keys.firstOrNull()
+
+            if (keyToRemove != null) {
+                // 刪除該項紀錄
+                val editor = sharedPreferences.edit()
+                editor.remove(keyToRemove)
+
+                todayCalories -= record.substringAfter("熱量：").substringBefore(" kcal").toDouble()
+                tvCalories.text = "今日消耗熱量： $todayCalories"
+                editor.putFloat("todayCalories", todayCalories.toFloat())
+                editor.apply()
+
+
+
+                // 從顯示列表中刪除該項
+                recordList.removeAt(position)
+                adapter.notifyDataSetChanged()
+
+                Toast.makeText(requireContext(), "紀錄已刪除", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        builder.setView(dialogView)
+            .setPositiveButton("關閉") { dialog, _ -> dialog.dismiss() }
+
+        val dialog = builder.create()
+        dialog.show()
+    }
+
+
+    private fun showAllRecords() {
+        val sharedPreferences = requireActivity().getSharedPreferences("FoodRecords", Context.MODE_PRIVATE)
+        val allRecords = sharedPreferences.all
+
+        if (allRecords.isEmpty()) {
+            Toast.makeText(requireContext(), "沒有紀錄", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        // 準備食物紀錄的列表
+        val foodRecordsList = allRecords.values.map { it.toString() }.toMutableList()
+
+        // 建立 AlertDialog
+        val builder = android.app.AlertDialog.Builder(requireContext())
+        builder.setTitle("食物紀錄")
+
+        // 設置 ListView 並將資料綁定
+        val listView = ListView(requireContext())
+        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, foodRecordsList)
+        listView.adapter = adapter
+
+        // 將 ListView 加入到 AlertDialog 中
+        builder.setView(listView)
+
+        // 設置關閉按鈕
+        builder.setPositiveButton("關閉") { dialog, _ ->
+            dialog.dismiss()
+        }
+
+        // 顯示 AlertDialog
+        val dialog = builder.create()
+        dialog.show()
+    }
 
     private fun addToRecord(): Boolean {
         val sharedPreferences = requireActivity().getSharedPreferences("FoodRecords", Context.MODE_PRIVATE)
