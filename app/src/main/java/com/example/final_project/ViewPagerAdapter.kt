@@ -19,7 +19,7 @@ class ViewPagerAdapter(fragmentManager: FragmentManager, lifecycle: Lifecycle)
 
     override fun getItemCount(): Int {
         // 返回 ViewPager2 中頁面的數量
-        return 5
+        return 4
     }
 
     override fun createFragment(position: Int): Fragment {
@@ -38,13 +38,12 @@ class ViewPagerAdapter(fragmentManager: FragmentManager, lifecycle: Lifecycle)
                 }
                 fragmentThree!!
             } // 第三個頁面
-            3 -> {
+            else -> {
                 if (fragmentFour == null) {
                     fragmentFour = FragmentFour()
                 }
                 fragmentFour!!
             }// 第四個頁面
-            else -> FragmentFive()// 第五個頁面
         }
     }
 

@@ -87,7 +87,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="20dp"
         android:text="自訂"
-        android:visibility="invisible"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="@id/btnSubmit"
         app:layout_constraintEnd_toStartOf="@id/btnSubmit"
         app:layout_constraintTop_toTopOf="@id/btnSubmit" />

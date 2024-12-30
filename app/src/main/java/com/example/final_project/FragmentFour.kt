@@ -38,6 +38,7 @@ class FragmentFour : Fragment() {
     private lateinit var edFood: EditText
     private lateinit var btnSubmit: Button
     private lateinit var btnShowRecord: Button
+    private lateinit var btnCustom: Button
     private lateinit var btnAdd: Button
 
     private lateinit var userData: UserData
@@ -60,6 +61,7 @@ class FragmentFour : Fragment() {
         edFood = view.findViewById(R.id.edFood)
         btnSubmit = view.findViewById(R.id.btnSubmit)
         btnShowRecord = view.findViewById(R.id.btnShowRecord)
+        btnCustom = view.findViewById(R.id.btnCustom)
         btnAdd = view.findViewById(R.id.btnAdd)
 
         // 從 SharedPreferences 中載入並顯示 userData
@@ -96,7 +98,9 @@ class FragmentFour : Fragment() {
             showRecordDialog() // 點擊按鈕後，顯示已添加的紀錄
         }
 
-
+        btnCustom.setOnClickListener {
+            customFood()
+        }
 
 
 
@@ -112,6 +116,49 @@ class FragmentFour : Fragment() {
 
 
         return view
+    }
+
+    //使用者自訂食物
+    private fun customFood() {
+        val sharedPreferences = requireActivity().getSharedPreferences("FoodRecords", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+
+        val builder = AlertDialog.Builder(requireContext())
+        val inflater = layoutInflater
+        val dialogView = inflater.inflate(R.layout.dialog_custom_food, null)
+
+        val edFoodName = dialogView.findViewById<EditText>(R.id.edFoodName)
+        val edFoodCalories = dialogView.findViewById<EditText>(R.id.edFoodCalories)
+        val edFoodTotalFat = dialogView.findViewById<EditText>(R.id.edFoodTotalFat)
+        val edFoodSaturatedFat = dialogView.findViewById<EditText>(R.id.edFoodSaturatedFat)
+        val edFoodCholesterol = dialogView.findViewById<EditText>(R.id.edFoodCholesterol)
+        val edFoodSodium = dialogView.findViewById<EditText>(R.id.edFoodSodium)
+        val edFoodCarbohydrate = dialogView.findViewById<EditText>(R.id.edFoodCarbohydrate)
+        val edFoodDietaryFiber = dialogView.findViewById<EditText>(R.id.edFoodDietaryFiber)
+        val edFoodSugars = dialogView.findViewById<EditText>(R.id.edFoodSugars)
+        val edFoodProtein = dialogView.findViewById<EditText>(R.id.edFoodProtein)
+
+        builder.setView(dialogView)
+            .setPositiveButton("新增") { dialog, _ ->
+                val foodName = edFoodName.text.toString()
+                val foodCalories = edFoodCalories.text.toString().toDoubleOrNull()
+                val foodTotalFat = edFoodTotalFat.text.toString().toDoubleOrNull()
+                val foodSaturatedFat = edFoodSaturatedFat.text.toString().toDoubleOrNull()
+                val foodCholesterol = edFoodCholesterol.text.toString().toDoubleOrNull()
+                val foodSodium = edFoodSodium.text.toString().toDoubleOrNull()
+                val foodCarbohydrate = edFoodCarbohydrate.text.toString().toDoubleOrNull()
+                val foodDietaryFiber = edFoodDietaryFiber.text.toString().toDoubleOrNull()
+                val foodSugars = edFoodSugars.text.toString().toDoubleOrNull()
+                val foodProtein = edFoodProtein.text.toString().toDoubleOrNull()
+
+                val customFoodData = FoodData(foodName, foodCalories ?: 0.0, foodTotalFat ?: 0.0, foodSaturatedFat ?: 0.0,foodCholesterol ?: 0.0,
+                    foodSodium ?: 0.0, foodCarbohydrate ?: 0.0, foodDietaryFiber ?: 0.0, foodSugars ?: 0.0, foodProtein ?: 0.0)
+                addToRecord(customFoodData)
+            }
+            .setNegativeButton("取消") { dialog, _ -> dialog.dismiss()}
+
+        val dialog = builder.create()
+        dialog.show()
     }
 
     private fun showRecordDialog() {
@@ -151,7 +198,7 @@ class FragmentFour : Fragment() {
                 editor.remove(keyToRemove)
 
                 todayCalories -= record.substringAfter("熱量：").substringBefore(" kcal").toDouble()
-                tvCalories.text = "今日消耗熱量： $todayCalories"
+                tvCalories.text = "今日攝取熱量： ${String.format("%.2f", todayCalories)}"
                 editor.putFloat("todayCalories", todayCalories.toFloat())
                 editor.apply()
 
@@ -168,41 +215,6 @@ class FragmentFour : Fragment() {
         builder.setView(dialogView)
             .setPositiveButton("關閉") { dialog, _ -> dialog.dismiss() }
 
-        val dialog = builder.create()
-        dialog.show()
-    }
-
-
-    private fun showAllRecords() {
-        val sharedPreferences = requireActivity().getSharedPreferences("FoodRecords", Context.MODE_PRIVATE)
-        val allRecords = sharedPreferences.all
-
-        if (allRecords.isEmpty()) {
-            Toast.makeText(requireContext(), "沒有紀錄", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        // 準備食物紀錄的列表
-        val foodRecordsList = allRecords.values.map { it.toString() }.toMutableList()
-
-        // 建立 AlertDialog
-        val builder = android.app.AlertDialog.Builder(requireContext())
-        builder.setTitle("食物紀錄")
-
-        // 設置 ListView 並將資料綁定
-        val listView = ListView(requireContext())
-        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, foodRecordsList)
-        listView.adapter = adapter
-
-        // 將 ListView 加入到 AlertDialog 中
-        builder.setView(listView)
-
-        // 設置關閉按鈕
-        builder.setPositiveButton("關閉") { dialog, _ ->
-            dialog.dismiss()
-        }
-
-        // 顯示 AlertDialog
         val dialog = builder.create()
         dialog.show()
     }
@@ -226,6 +238,44 @@ class FragmentFour : Fragment() {
 
         // 更新 todayCalories 並顯示和保存
         todayCalories += tvFood.text.toString().substringAfter("熱量：").substringBefore(" kcal").toDouble()
+        tvCalories.text = "今日攝取熱量： ${String.format("%.2f", todayCalories)}"
+
+        // 更新 todayCalories 並保存
+        editor.putFloat("todayCalories", todayCalories.toFloat())
+        editor.apply()
+
+        return true
+    }
+
+    //addToRecord多載，以區分是否為自訂食物
+    private fun addToRecord(item : FoodData): Boolean {
+        val sharedPreferences = requireActivity().getSharedPreferences("FoodRecords", Context.MODE_PRIVATE)
+        val allRecords = sharedPreferences.all
+
+        // 檢查是否已經有相同的食物紀錄
+        if (allRecords.values.any { it.toString().contains(item.food_name) }) {
+            Toast.makeText(requireContext(), "已經存在於紀錄中", Toast.LENGTH_SHORT).show()
+            return false// 如果已經存在，返回 false
+        }
+
+        val editor = sharedPreferences.edit()
+        val foodName = item.food_name
+
+        // 使用活動名稱和當前時間戳組合成唯一的 key，避免重複的項目被覆蓋
+        val uniqueKey = "${foodName}_${System.currentTimeMillis()}"
+        editor.putString(uniqueKey, "食物名稱：${item.food_name}\n" +
+                "熱量：${item.nf_calories} kcal\n"+
+                "脂肪：${item.nf_total_fat} g\n"+
+                "飽和脂肪：${item.nf_saturated_fat} g\n"+
+                "膽固醇：${item.nf_cholesterol} mg\n"+
+                "鈉：${item.nf_sodium} mg\n"+
+                "碳水化合物：${item.nf_total_carbohydrate} g\n"+
+                "膳食纖維：${item.nf_dietary_fiber} g\n"+
+                "糖分：${item.nf_sugars} g\n"+
+                "蛋白質：${item.nf_protein} g\n")
+
+        // 更新 todayCalories 並顯示和保存
+        todayCalories += item.nf_calories
         tvCalories.text = "今日攝取熱量： ${String.format("%.2f", todayCalories)}"
 
         // 更新 todayCalories 並保存

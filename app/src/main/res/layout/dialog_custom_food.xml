@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <EditText
+        android:id="@+id/edFoodName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="text"
+        android:hint="請輸入食物名稱"/>
+
+    <EditText
+        android:id="@+id/edFoodCalories"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="number"
+        android:hint="請輸入熱量 (kcal)" />
+
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:text="以下選填" />
+
+    <EditText
+        android:id="@+id/edFoodTotalFat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="number"
+        android:hint="請輸入脂肪 (g)" />
+    <EditText
+        android:id="@+id/edFoodSaturatedFat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="number"
+        android:hint="請輸入飽和脂肪 (g)" />
+    <EditText
+        android:id="@+id/edFoodCholesterol"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="number"
+        android:hint="請輸入膽固醇 (mg)" />
+    <EditText
+        android:id="@+id/edFoodSodium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="number"
+        android:hint="請輸入鈉 (mg)" />
+    <EditText
+        android:id="@+id/edFoodCarbohydrate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="number"
+        android:hint="請輸入碳水化合物 (g)" />
+    <EditText
+        android:id="@+id/edFoodDietaryFiber"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="number"
+        android:hint="請輸入膳食纖維 (g)" />
+    <EditText
+        android:id="@+id/edFoodSugars"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="number"
+        android:hint="請輸入糖分 (g)" />
+    <EditText
+        android:id="@+id/edFoodProtein"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="number"
+        android:hint="請輸入蛋白質 (g)" />
+
+</LinearLayout>

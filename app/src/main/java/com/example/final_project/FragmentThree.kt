@@ -96,10 +96,41 @@ class FragmentThree : Fragment() {
             showRecordDialog() // 點擊按鈕後，顯示已添加的紀錄
         }
 
+        btnCustom.setOnClickListener {
+            customExercise()
+        }
+
 
 
         // 返回 View 對象
         return view
+    }
+
+    //使用者自訂運動
+    private fun customExercise() {
+        val sharedPreferences = requireActivity().getSharedPreferences("ActivityRecords", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+
+        val builder = AlertDialog.Builder(requireContext())
+        val inflater = layoutInflater
+        val dialogView = inflater.inflate(R.layout.dialog_custom_exercise, null)
+
+        val edExerciseName = dialogView.findViewById<EditText>(R.id.edExerciseName)
+        val edExerciseCalories = dialogView.findViewById<EditText>(R.id.edExerciseCalories)
+
+        builder.setView(dialogView)
+            .setPositiveButton("新增") { dialog, _ ->
+                val exerciseName = edExerciseName.text.toString()
+                val exerciseCalories = edExerciseCalories.text.toString().toDoubleOrNull()
+                val customCaloriesBurnedResult = CaloriesBurnedResult(exerciseName, 0.0, 0, exerciseCalories ?: 0.0)
+                addToRecord(customCaloriesBurnedResult)
+            }
+            .setNegativeButton("取消") { dialog, _ -> dialog.dismiss()}
+
+        val dialog = builder.create()
+        dialog.show()
+
+
     }
 
     private fun showRecordDialog() {
