@@ -53,7 +53,6 @@ class MainActivity : AppCompatActivity() {
                 1 -> tab.text = "個人資料"
                 2 -> tab.text = "運動"
                 3 -> tab.text = "飲食"
-                4 -> tab.text = "待更改"
             }
         }.attach()
 
